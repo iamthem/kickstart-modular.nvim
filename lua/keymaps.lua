@@ -14,17 +14,9 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 --
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
--- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
---
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
@@ -50,5 +42,30 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+--
+--==================================================
+-- Buffer cyclying
+--==================================================
+-- Map <Tab> to go to the next buffer
+vim.keymap.set('n', '<Tab>', ':bnext<CR>', { noremap = true, silent = true })
+
+-- Map <Shift-Tab> to go to the previous buffer
+vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { noremap = true, silent = true })
+
+-- Visual mode: search for selected text using //
+vim.keymap.set('v', '//', [[y/\V<C-R>=escape(@",'/\')<CR><CR>]], { noremap = true, silent = true })
+-- Normal mode: <leader>/ to clear search highlight
+vim.keymap.set('n', '<leader>/', ':noh<CR>', { noremap = true, silent = true })
+
+-- Diff shortcuts
+vim.keymap.set('n', 'dfu', ':diffupdate<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'dfp', ':diffput<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'dfg', ':diffget<CR>', { noremap = true, silent = true })
+
+-- In insert mode: <C-e> moves to end of line
+vim.keymap.set('i', '<C-e>', '<C-o>$', { noremap = true })
+
+-- In insert mode: <C-a> moves to beginning of line
+vim.keymap.set('i', '<C-a>', '<C-o>0', { noremap = true })
 
 -- vim: ts=2 sts=2 sw=2 et

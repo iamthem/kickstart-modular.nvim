@@ -3,11 +3,9 @@
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
--- Make line numbers default
-vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -20,6 +18,7 @@ vim.opt.showmode = false
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.schedule(function()
+  vim.g.clipboard = 'xclip'
   vim.opt.clipboard = 'unnamedplus'
 end)
 
@@ -29,9 +28,13 @@ vim.opt.breakindent = true
 -- Save undo history
 vim.opt.undofile = true
 
+-- Searches
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
+vim.opt.hlsearch = true
+vim.opt.incsearch = true
 vim.opt.ignorecase = true
-vim.opt.smartcase = true
+vim.opt.infercase = true
+--vim.opt.smartcase = true
 
 -- Keep signcolumn on by default
 vim.opt.signcolumn = 'yes'
@@ -65,5 +68,36 @@ vim.opt.scrolloff = 10
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
 vim.opt.confirm = true
+
+-- Options copied from from 01-settings
+vim.opt.ch = 2
+vim.opt.autoread = true
+vim.opt.hidden = true
+
+vim.opt.foldmethod = 'indent'
+vim.opt.foldnestmax = 8
+
+vim.opt.showcmd = true
+vim.opt.shortmess:append 'c'
+
+vim.opt.autoindent = true
+vim.opt.encoding = 'utf-8'
+vim.opt.formatoptions = 'croqj'
+
+vim.opt.lazyredraw = true
+vim.opt.linebreak = true
+
+-- Tabs
+-- Enable smart tab behavior
+vim.opt.smarttab = true
+
+-- Tab and indent settings
+vim.opt.tabstop = 4 -- Number of spaces a <Tab> counts for
+vim.opt.shiftwidth = 4 -- Number of spaces to use for each step of (auto)indent
+vim.opt.softtabstop = 4 -- Number of spaces inserted when pressing <Tab>
+vim.opt.expandtab = true -- Use spaces instead of tab characters
+
+-- 24-bit colour
+vim.opt.termguicolors = true
 
 -- vim: ts=2 sts=2 sw=2 et
