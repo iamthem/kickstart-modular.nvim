@@ -20,3 +20,8 @@ end, { remap = true })
 vim.keymap.set('', 'mw', function()
   hop.hint_words { direction = directions.AFTER_CURSOR, current_line_only = false }
 end, { remap = true })
+
+local neogit = require 'neogit'
+vim.keymap.set('', 'gm', function()
+  neogit.open()
+end, { remap = true })

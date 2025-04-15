@@ -17,6 +17,7 @@ return {
           'python',
           'markdown',
           'markdown_inline',
+          'rnoweb',
           'julia',
           'bash',
           'yaml',

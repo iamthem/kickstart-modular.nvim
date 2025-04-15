@@ -14,6 +14,16 @@
 --
 -- See `:help gitsigns` to understand what the configuration keys do
 return {
+  {
+    'tpope/vim-fugitive',
+    config = function()
+      --vim-fugitive
+      vim.keymap.set('n', 'gP', ':Git push --quiet <CR>', { noremap = true, desc = 'git push' })
+      vim.keymap.set('n', 'dfgh', ':diffget //2<CR>', { noremap = true, desc = 'Choose target branch (i.e. current branch) version' })
+      vim.keymap.set('n', 'dfgm', ':diffget //3<CR>', { noremap = true, desc = 'Choose merge branch version' })
+      vim.keymap.set('n', 'gdf', ':vertical Gdiffsplit!<cr>', { noremap = true, desc = '3 way diffsplit' })
+    end,
+  },
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -51,18 +61,11 @@ return {
         end, { desc = 'Jump to previous git [c]hange' })
 
         -- Actions
-        -- visual mode
-        map('v', '<leader>hs', function()
-          gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
-        end, { desc = 'git [s]tage hunk' })
-        map('v', '<leader>hr', function()
-          gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
-        end, { desc = 'git [r]eset hunk' })
         -- normal mode
         map('n', 'ghs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk' })
-        map('n', 'ghr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk' })
-        map('n', 'ghS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer' })
-        map('n', 'ghu', gitsigns.stage_hunk, { desc = 'git [u]ndo stage hunk' })
+        map('n', 'ghu', gitsigns.reset_hunk, { desc = 'git [r]eset hunk' })
+        map('n', 'gaf', gitsigns.stage_buffer, { desc = 'git [S]tage buffer' })
+        map('n', 'ghS', gitsigns.stage_hunk, { desc = 'git [u]ndo stage hunk' })
         map('n', 'ghR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer' })
         map('n', 'ghp', gitsigns.preview_hunk, { desc = 'git [p]review hunk' })
         map('n', 'ghb', gitsigns.blame_line, { desc = 'git [b]lame line' })

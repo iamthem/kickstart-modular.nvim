@@ -17,7 +17,7 @@ return {
             vim.api.nvim_buf_set_keymap(0, 'n', '<Enter>', '<Plug>RDSendLine', {})
             vim.api.nvim_buf_set_keymap(0, 'v', '<Enter>', '<Plug>RSendSelection', {})
             vim.keymap.set('i', 'PP', '%>%', { silent = true, noremap = true, desc = desc })
-            vim.keymap.set('i', '--', '<- ', { silent = true, noremap = true, desc = desc })
+            vim.keymap.set('i', '--', ' <- ', { silent = true, noremap = true, desc = desc })
 
             if vim.o.termguicolors then
               vim.g.rout_color_input = 'guifg=#9e9e9e'
@@ -40,7 +40,7 @@ return {
             end
           end,
         },
-        R_path = '/home/osg-leandro/miniconda3/envs/py3Renv/bin',
+        R_path = '/home/ubuntu/miniconda3/envs/py3Renv/bin',
         R_args = { '--quiet', '--no-save' },
         min_editor_width = 72,
         rconsole_width = 78,
@@ -79,5 +79,15 @@ return {
         require('cmp_r').setup {}
       end,
     },
+  },
+  {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate',
+    config = function()
+      require('nvim-treesitter.configs').setup {
+        ensure_installed = { 'markdown', 'markdown_inline', 'r', 'rnoweb', 'yaml', 'latex', 'csv' },
+        highlight = { enable = true },
+      }
+    end,
   },
 }

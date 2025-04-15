@@ -1,7 +1,8 @@
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'r', 'rmd' },
-  callback = function()
-    vim.keymap.set('i', 'PP', '%>%', { silent = true, noremap = true, desc = desc })
-    vim.keymap.set('i', '--', '<- ', { silent = true, noremap = true, desc = desc })
+  pattern = { 'r', 'rmd', 'rmarkdown' },
+  callback = function(args)
+    vim.diagnostic.config({
+      severity = { min = vim.diagnostic.severity.WARN },
+    }, args.buf)
   end,
 })

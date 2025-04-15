@@ -195,7 +195,6 @@ wk.add({
   { '<cm-i>', insert_py_chunk, desc = 'python code chunk' },
   { '<esc>', '<cmd>noh<cr>', desc = 'remove search highlight' },
   { '<m-I>', insert_py_chunk, desc = 'python code chunk' },
-  { '<c-c>', insert_r_chunk, desc = 'r code chunk' },
   { '[q', ':silent cprev<cr>', desc = '[q]uickfix prev' },
   { ']q', ':silent cnext<cr>', desc = '[q]uickfix next' },
   { 'gN', 'Nzzzv', desc = 'center search' },
@@ -246,7 +245,7 @@ local function new_terminal_python()
 end
 
 local function new_terminal_r()
-  new_terminal '/home/osg-leandro/miniconda3/envs/py3Renv/bin/R --no-save'
+  new_terminal '/home/ubuntu/miniconda3/envs/py3Renv/bin/R --no-save'
 end
 
 local function new_terminal_ipython()
@@ -348,19 +347,19 @@ wk.add({
     { '<leader>ht', group = '[t]reesitter' },
     { '<leader>htt', vim.treesitter.inspect_tree, desc = 'show [t]ree' },
     { '<leader>i', group = '[i]mage' },
-    { '<leader>l', group = '[l]anguage/lsp' },
-    { '<leader>la', vim.lsp.buf.code_action, desc = 'code [a]ction' },
-    { '<leader>ld', group = '[d]iagnostics' },
+    { '<localleader>l', group = '[l]anguage/lsp' },
+    { '<localleader>la', vim.lsp.buf.code_action, desc = 'code [a]ction' },
+    { '<localleader>ld', group = '[d]iagnostics' },
     {
-      '<leader>ldd',
+      '<localleader>ldd',
       function()
         vim.diagnostic.enable(false)
       end,
       desc = '[d]isable',
     },
-    { '<leader>lde', vim.diagnostic.enable, desc = '[e]nable' },
-    { '<leader>le', vim.diagnostic.open_float, desc = 'diagnostics (show hover [e]rror)' },
-    { '<leader>lg', ':Neogen<cr>', desc = 'neo[g]en docstring' },
+    { '<localleader>lde', vim.diagnostic.enable, desc = '[e]nable' },
+    { '<localleader>le', vim.diagnostic.open_float, desc = 'diagnostics (show hover [e]rror)' },
+    { '<localleader>lg', ':Neogen<cr>', desc = 'neo[g]en docstring' },
     { '<leader>o', group = '[o]tter & c[o]de' },
     { '<leader>oa', require('otter').activate, desc = 'otter [a]ctivate' },
     { '<leader>ob', insert_bash_chunk, desc = '[b]ash code chunk' },
