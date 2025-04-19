@@ -18,29 +18,10 @@ return {
             vim.api.nvim_buf_set_keymap(0, 'v', '<Enter>', '<Plug>RSendSelection', {})
             vim.keymap.set('i', 'PP', '%>%', { silent = true, noremap = true, desc = desc })
             vim.keymap.set('i', '--', ' <- ', { silent = true, noremap = true, desc = desc })
-
-            if vim.o.termguicolors then
-              vim.g.rout_color_input = 'guifg=#9e9e9e'
-              vim.g.rout_color_normal = 'guifg=#ff5f00'
-              vim.g.rout_color_number = 'guifg=#ffaf00'
-              vim.g.rout_color_integer = 'guifg=#feaf00'
-              vim.g.rout_color_float = 'guifg=#fdaf00'
-              vim.g.rout_color_complex = 'guifg=#fcaf00'
-              vim.g.rout_color_negnum = 'guifg=#d7afff'
-              vim.g.rout_color_negfloat = 'guifg=#d6afff'
-              vim.g.rout_color_date = 'guifg=#00d7af'
-              vim.g.rout_color_true = 'guifg=#5dd685'
-              vim.g.rout_color_false = 'guifg=#ff5d5e'
-              vim.g.rout_color_inf = 'guifg=#10aed7'
-              vim.g.rout_color_constant = 'guifg=#5fafcf'
-              vim.g.rout_color_string = 'guifg=#5fd7af'
-              vim.g.rout_color_error = 'guifg=#ffffff guibg=#c40000'
-              vim.g.rout_color_warn = 'guifg=#d00000'
-              vim.g.rout_color_index = 'guifg=#d0d080'
-            end
+            vim.g.rout_follow_colorscheme = true
           end,
         },
-        R_path = '/home/ubuntu/miniconda3/envs/py3Renv/bin',
+        R_path = '/home/osg-leandro/miniconda3/envs/py3Renv/bin',
         R_args = { '--quiet', '--no-save' },
         min_editor_width = 72,
         rconsole_width = 78,
