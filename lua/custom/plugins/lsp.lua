@@ -106,12 +106,16 @@ return {
         capabilities = capabilities,
         flags = lsp_flags,
         filetypes = { 'r', 'rmd', 'rmarkdown' }, -- not directly using it for quarto (as that is handled by otter and often contains more languanges than just R)
-        cmd = { '/home/ubuntu/miniconda3/envs/py3Renv/bin/R', '--no-echo', '-e', 'languageserver::run()' },
+        cmd = { '/home/ubuntu/miniconda3/envs/py3Renv/bin/R', '--slave', '--no-echo', '-e', 'languageserver::run()' },
         log_level = vim.lsp.protocol.MessageType.Error,
         settings = {
           r = {
             lsp = {
               rich_documentation = true,
+              diagnostics_level = 'warning', -- hide informational hints
+              formatting_style = 'tidyverse',
+              max_cache_size = 200,
+              exclude_diagnostics = { 'object_usage', 'indentation_linter', 'comment_code_linter', 'object_name_linter' },
             },
           },
         },
@@ -251,11 +255,6 @@ return {
       -- }
 
       lspconfig.clangd.setup {
-        capabilities = capabilities,
-        flags = lsp_flags,
-      }
-
-      lspconfig.rust_analyzer.setup {
         capabilities = capabilities,
         flags = lsp_flags,
       }

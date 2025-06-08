@@ -249,7 +249,7 @@ local function new_terminal_r()
 end
 
 local function new_terminal_ipython()
-  new_terminal 'ipython --no-confirm-exit'
+  new_terminal '/home/ubuntu/miniconda3/envs/py3Renv/bin/ipython --no-confirm-exit'
 end
 
 local function new_terminal_julia()

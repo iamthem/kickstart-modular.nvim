@@ -21,7 +21,7 @@ return {
             vim.g.rout_follow_colorscheme = true
           end,
         },
-        R_path = '/home/osg-leandro/miniconda3/envs/py3Renv/bin',
+        R_path = '/home/ubuntu/miniconda3/envs/py3Renv/bin',
         R_args = { '--quiet', '--no-save' },
         min_editor_width = 72,
         rconsole_width = 78,
