@@ -55,6 +55,7 @@ return {
       map('n', '<leader>sm', fzf.marks, desc 'Marks')
       map('n', '<leader>sk', fzf.keymaps, desc 'Keymaps')
       map('n', '<leader>sg', fzf.live_grep, desc 'FZF Grep')
+      map('n', '<leader>l', fzf.lines, desc 'FZF Open Buffer Lines')
       map('n', '<leader>b', fzf.buffers, desc 'FZF Buffers')
       map('v', '<C-f>', fzf.grep_visual, desc 'FZF Selection')
       map('n', '<leader>sh', fzf.helptags, desc 'Help Tags')
