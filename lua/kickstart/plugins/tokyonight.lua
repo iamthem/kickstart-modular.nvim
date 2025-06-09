@@ -16,7 +16,8 @@ return {
 
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+      -- Dark theme 'kanagawa-wave'
+      -- Light theme 'kanagawa-lotus'
       vim.cmd.colorscheme 'kanagawa-wave'
     end,
   },

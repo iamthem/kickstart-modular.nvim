@@ -106,7 +106,7 @@ return {
         capabilities = capabilities,
         flags = lsp_flags,
         filetypes = { 'r', 'rmd', 'rmarkdown' }, -- not directly using it for quarto (as that is handled by otter and often contains more languanges than just R)
-        cmd = { '/home/ubuntu/miniconda3/envs/py3Renv/bin/R', '--slave', '--no-echo', '-e', 'languageserver::run()' },
+        cmd = { '/home/osg-leandro/miniconda3/envs/py3Renv/bin/R', '--no-echo', '-e', 'languageserver::run()' },
         log_level = vim.lsp.protocol.MessageType.Error,
         settings = {
           r = {

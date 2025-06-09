@@ -245,11 +245,11 @@ local function new_terminal_python()
 end
 
 local function new_terminal_r()
-  new_terminal '/home/ubuntu/miniconda3/envs/py3Renv/bin/R --no-save'
+  new_terminal '/home/osg-leandro/miniconda3/envs/py3Renv/bin/R --no-save'
 end
 
 local function new_terminal_ipython()
-  new_terminal '/home/ubuntu/miniconda3/envs/py3Renv/bin/ipython --no-confirm-exit'
+  new_terminal '/home/osg-leandro/miniconda3/envs/py3Renv/bin/ipython --no-confirm-exit'
 end
 
 local function new_terminal_julia()
