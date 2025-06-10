@@ -53,6 +53,7 @@ return {
       map('n', '<leader>sr', fzf.resume, desc 'FZF Resume')
       map('n', '<leader>sR', fzf.registers, desc 'Registers')
       map('n', '<leader>sm', fzf.marks, desc 'Marks')
+      map('n', '<leader>hi', fzf.command_history, desc 'Marks')
       map('n', '<leader>sk', fzf.keymaps, desc 'Keymaps')
       map('n', '<leader>sg', fzf.live_grep, desc 'FZF Grep')
       map('n', '<leader>l', fzf.lines, desc 'FZF Open Buffer Lines')
