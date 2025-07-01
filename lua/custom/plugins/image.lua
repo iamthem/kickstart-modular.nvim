@@ -1,6 +1,5 @@
 return {
   '3rd/image.nvim',
-  version = '1.1.0',
   opts = {},
   config = function()
     require('image').setup {

@@ -63,7 +63,7 @@ return {
       map('n', '<leader>sc', fzf.git_bcommits, desc 'Browse File Commits')
       map('n', '<leader>ss', fzf.git_status, desc 'Git Status')
       map('n', '<localleader>d', fzf.lsp_definitions, desc 'Jump to Definition')
-      map('n', '<localleader>r', fzf.lsp_references, desc 'LSP References')
+      map('n', '<leader>r', fzf.lsp_references, desc 'LSP References')
       map('n', '<localleader>I', fzf.lsp_implementations, desc 'LSP implementation')
       map('n', '<localleader>D', fzf.lsp_typedefs, desc 'LSP Type Def')
 

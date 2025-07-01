@@ -32,6 +32,7 @@ return {
       keymap = {
         preset = 'enter',
         ['<c-y>'] = { 'show_documentation', 'hide_documentation' },
+        ['<Tab>'] = false,
       },
       cmdline = {
         enabled = false,

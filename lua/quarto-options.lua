@@ -4,11 +4,6 @@ local ms = vim.lsp.protocol.Methods
 
 P = vim.print
 
-vim.g['quarto_is_r_mode'] = nil
-vim.g['reticulate_running'] = false
-
-vim.g.slime_cell_delimiter = '```'
-
 local nmap = function(key, effect, desc)
   vim.keymap.set('n', key, effect, { silent = true, noremap = true, desc = desc })
 end
@@ -23,102 +18,6 @@ end
 
 local cmap = function(key, effect, desc)
   vim.keymap.set('c', key, effect, { silent = true, noremap = true, desc = desc })
-end
---
--- Send code to terminal with vim-slime
---- If an R terminal has been opend, this is in r_mode
---- and will handle python code via reticulate when sent
---- from a python chunk.
---- TODO: incorpoarate this into quarto-nvim plugin
---- such that QuartoSend functions get the same capabilities
---- TODO: figure out bracketed paste for reticulate python repl.
-local function send_cell()
-  local has_molten, molten_status = pcall(require, 'molten.status')
-  local molten_works = false
-  local molten_active = ''
-  if has_molten then
-    molten_works, molten_active = pcall(molten_status.kernels)
-  end
-  if molten_works and molten_active ~= vim.NIL and molten_active ~= '' then
-    molten_active = molten_status.initialized()
-  end
-  if molten_active ~= vim.NIL and molten_active ~= '' and molten_status.kernels() ~= 'Molten' then
-    vim.cmd.QuartoSend()
-    return
-  end
-
-  if vim.b['quarto_is_r_mode'] == nil then
-    vim.fn['slime#send_cell']()
-    return
-  end
-  if vim.b['quarto_is_r_mode'] == true then
-    vim.g.slime_python_ipython = 0
-    local is_python = require('otter.tools.functions').is_otter_language_context 'python'
-    if is_python and not vim.b['reticulate_running'] then
-      vim.fn['slime#send']('reticulate::repl_python()' .. '\r')
-      vim.b['reticulate_running'] = true
-    end
-    if not is_python and vim.b['reticulate_running'] then
-      vim.fn['slime#send']('exit' .. '\r')
-      vim.b['reticulate_running'] = false
-    end
-    vim.fn['slime#send_cell']()
-  end
-end
-
---- Send code to terminal with vim-slime
---- If an R terminal has been opend, this is in r_mode
---- and will handle python code via reticulate when sent
---- from a python chunk.
-local slime_send_region_cmd = ':<C-u>call slime#send_op(visualmode(), 1)<CR>'
-slime_send_region_cmd = vim.api.nvim_replace_termcodes(slime_send_region_cmd, true, false, true)
-local function send_region()
-  -- if filetyps is not quarto, just send_region
-  if vim.bo.filetype ~= 'quarto' or vim.b['quarto_is_r_mode'] == nil then
-    vim.cmd('normal' .. slime_send_region_cmd)
-    return
-  end
-  if vim.b['quarto_is_r_mode'] == true then
-    vim.g.slime_python_ipython = 0
-    local is_python = require('otter.tools.functions').is_otter_language_context 'python'
-    if is_python and not vim.b['reticulate_running'] then
-      vim.fn['slime#send']('reticulate::repl_python()' .. '\r')
-      vim.b['reticulate_running'] = true
-    end
-    if not is_python and vim.b['reticulate_running'] then
-      vim.fn['slime#send']('exit' .. '\r')
-      vim.b['reticulate_running'] = false
-    end
-    vim.cmd('normal' .. slime_send_region_cmd)
-  end
-end
-
---- Send individual Line to terminal with vim-slime
-vim.keymap.set('n', '<localleader>l', function()
-  -- Get the current line.
-  local line = vim.api.nvim_get_current_line()
-  -- Call vim-slime's send function by invoking its Vimscript function.
-  vim.fn['slime#send'](line .. '\n')
-end, { noremap = true, silent = true, desc = 'Send current line with vim-slime' })
-
--- send code with ctrl+Enter
--- just like in e.g. RStudio
--- needs kitty (or other terminal) config:
--- map shift+enter send_text all \x1b[13;2u
--- map ctrl+enter send_text all \x1b[13;5u
-nmap('<localleader>cc', send_cell)
-imap('<c-cr>', send_cell)
-
---- Show R dataframe in the browser
--- might not use what you think should be your default web browser
--- because it is a plain html file, not a link
--- see https://askubuntu.com/a/864698 for places to look for
-local function show_r_table()
-  local node = vim.treesitter.get_node { ignore_injections = false }
-  assert(node, 'no symbol found under cursor')
-  local text = vim.treesitter.get_node_text(node, 0)
-  local cmd = [[call slime#send("DT::datatable(]] .. text .. [[)" . "\r")]]
-  vim.cmd(cmd)
 end
 
 -- keep selection after indent/dedent
@@ -192,7 +91,6 @@ end
 wk.add({
   { '<c-LeftMouse>', '<cmd>lua vim.lsp.buf.definition()<CR>', desc = 'go to definition' },
   { '<c-q>', '<cmd>q<cr>', desc = 'close buffer' },
-  { '<cm-i>', insert_py_chunk, desc = 'python code chunk' },
   { '<esc>', '<cmd>noh<cr>', desc = 'remove search highlight' },
   { '<m-I>', insert_py_chunk, desc = 'python code chunk' },
   { '[q', ':silent cprev<cr>', desc = '[q]uickfix prev' },
@@ -212,7 +110,6 @@ wk.add {
     { '.', ':norm .<cr>', desc = 'repat last normal mode command' },
     { '<M-j>', ":m'>+<cr>`<my`>mzgv`yo`z", desc = 'move line down' },
     { '<M-k>', ":m'<-2<cr>`>my`<mzgv`yo`z", desc = 'move line up' },
-    { '<cr>', send_region, desc = 'run code region' },
     { 'q', ':norm @q<cr>', desc = 'repat q macro' },
   },
 }
@@ -228,9 +125,8 @@ wk.add({
   {
     mode = { 'i' },
     { '<c-x><c-x>', '<c-x><c-o>', desc = 'omnifunc completion' },
-    { '<cm-i>', insert_py_chunk, desc = 'python code chunk' },
     { '<m-->', ' <- ', desc = 'assign' },
-    { '<m-I>', insert_py_chunk, desc = 'python code chunk' },
+    { '<c-i>', insert_py_chunk, desc = 'python code chunk' },
     { '<c-c>', insert_r_chunk, desc = 'r code chunk' },
     { '<m-m>', ' |>', desc = 'pipe' },
   },
@@ -291,11 +187,121 @@ local function toggle_conceal()
   end
 end
 
+require('jupytext').setup {
+  style = 'markdown',
+  output_extension = 'md',
+  force_ft = 'markdown',
+}
+-- automatically import output chunks from a jupyter notebook
+-- tries to find a kernel that matches the kernel in the jupyter notebook
+-- falls back to a kernel that matches the name of the active venv (if any)
+local imb = function(e) -- init molten buffer
+  vim.schedule(function()
+    local kernels = vim.fn.MoltenAvailableKernels()
+    local try_kernel_name = function()
+      local metadata = vim.json.decode(io.open(e.file, 'r'):read 'a')['metadata']
+      return metadata.kernelspec.name
+    end
+    local ok, kernel_name = pcall(try_kernel_name)
+    if not ok or not vim.tbl_contains(kernels, kernel_name) then
+      kernel_name = nil
+      local venv = os.getenv 'VIRTUAL_ENV' or os.getenv 'CONDA_PREFIX'
+      if venv ~= nil then
+        kernel_name = string.match(venv, '/.+/(.+)')
+      end
+    end
+    if kernel_name ~= nil and vim.tbl_contains(kernels, kernel_name) then
+      vim.cmd(('MoltenInit %s'):format(kernel_name))
+    end
+    vim.cmd 'MoltenImportOutput'
+  end)
+end
+
+-- automatically import output chunks from a jupyter notebook
+vim.api.nvim_create_autocmd('BufAdd', {
+  pattern = { '*.ipynb' },
+  callback = imb,
+})
+
+-- we have to do this as well so that we catch files opened like nvim ./hi.ipynb
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = { '*.ipynb' },
+  callback = function(e)
+    if vim.api.nvim_get_vvar 'vim_did_enter' ~= 1 then
+      imb(e)
+    end
+  end,
+})
+
+-- automatically export output chunks to a jupyter notebook on write
+vim.api.nvim_create_autocmd('BufWritePost', {
+  pattern = { '*.ipynb' },
+  callback = function()
+    if require('molten.status').initialized() == 'Molten' then
+      vim.cmd 'MoltenExportOutput!'
+    end
+  end,
+})
+
+-- Provide a command to create a blank new Python notebook
+-- note: the metadata is needed for Jupytext to understand how to parse the notebook.
+-- if you use another language than Python, you should change it in the template.
+local default_notebook = [[
+  {
+    "cells": [
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ""
+      ]
+     }
+    ],
+    "metadata": {
+     "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+     },
+     "language_info": {
+      "codemirror_mode": {
+        "name": "ipython"
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3"
+     }
+    },
+    "nbformat": 4,
+    "nbformat_minor": 5
+  }
+]]
+
+local function new_notebook(filename)
+  local path = filename .. '.ipynb'
+  local file = io.open(path, 'w')
+  if file then
+    file:write(default_notebook)
+    file:close()
+    vim.cmd('edit ' .. path)
+  else
+    print 'Error: Could not open new notebook file for writing.'
+  end
+end
+
+vim.api.nvim_create_user_command('NewNotebook', function(opts)
+  new_notebook(opts.args)
+end, {
+  nargs = 1,
+  complete = 'file',
+})
+
 -- eval "$(tmux showenv -s DISPLAY)"
 -- normal mode with <leader>
 wk.add({
   {
-    { '<leader><cr>', send_cell, desc = 'run code cell' },
     { '<leader>c', group = '[c]ode / [c]ell / [c]hunk' },
     { '<leader>ci', new_terminal_ipython, desc = 'new [i]python terminal' },
     { '<leader>cj', new_terminal_julia, desc = 'new [j]ulia terminal' },
@@ -384,15 +390,8 @@ wk.add({
     { '<leader>qp', ":lua require'quarto'.quartoPreview()<cr>", desc = '[p]review' },
     { '<leader>qu', ":lua require'quarto'.quartoUpdatePreview()<cr>", desc = '[u]pdate preview' },
     { '<leader>qq', ":lua require'quarto'.quartoClosePreview()<cr>", desc = '[q]uiet preview' },
-    { '<leader>qr', group = '[r]un' },
-    { '<leader>qra', ':QuartoSendAll<cr>', desc = 'run [a]ll' },
-    { '<leader>qrb', ':QuartoSendBelow<cr>', desc = 'run [b]elow' },
-    { '<leader>qrr', ':QuartoSendAbove<cr>', desc = 'to cu[r]sor' },
-    { '<leader>r', group = '[r] R specific tools' },
-    { '<leader>rt', show_r_table, desc = 'show [t]able' },
     { '<leader>v', group = '[v]im' },
     { '<leader>vc', ':Telescope colorscheme<cr>', desc = '[c]olortheme' },
-    { '<leader>vh', ':execute "h " . expand("<cword>")<cr>', desc = 'vim [h]elp for current word' },
     { '<leader>vl', ':Lazy<cr>', desc = '[l]azy package manager' },
     { '<leader>vm', ':Mason<cr>', desc = '[m]ason software installer' },
     { '<leader>vs', ':e $MYVIMRC | :cd %:p:h | split . | wincmd k<cr>', desc = '[s]ettings, edit vimrc' },

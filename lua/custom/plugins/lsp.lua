@@ -283,6 +283,9 @@ return {
               autoSearchPaths = true,
               useLibraryCodeForTypes = true,
               diagnosticMode = 'workspace',
+              diagnosticSeverityOverrides = {
+                reportUnusedExpression = 'none',
+              },
             },
           },
         },
