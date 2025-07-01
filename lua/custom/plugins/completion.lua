@@ -25,6 +25,7 @@ return {
         opts = { impersonate_nvim_cmp = true, enable_events = true, debug = true },
       },
       { 'kdheepak/cmp-latex-symbols' },
+      { 'giuxtaposition/blink-cmp-copilot' },
     },
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
@@ -38,7 +39,7 @@ return {
         enabled = false,
       },
       sources = {
-        default = { 'lazydev', 'lsp', 'path', 'git', 'snippets', 'buffer', 'emoji' },
+        default = { 'lazydev', 'lsp', 'path', 'git', 'snippets', 'buffer', 'emoji', 'copilot' },
         providers = {
           emoji = {
             module = 'blink-emoji',
@@ -60,6 +61,12 @@ return {
             end,
           },
           symbols = { name = 'symbols', module = 'blink.compat.source' },
+          copilot = {
+            name = 'copilot',
+            module = 'blink-cmp-copilot',
+            score_offset = 100,
+            async = true,
+          },
         },
       },
       appearance = {
