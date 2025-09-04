@@ -67,6 +67,46 @@ return {
       map('n', '<localleader>I', fzf.lsp_implementations, desc 'LSP implementation')
       map('n', '<localleader>D', fzf.lsp_typedefs, desc 'LSP Type Def')
 
+      map('n', '<localleader>lld', function()
+        vim.b.lint_disable = true
+
+        vim.b.format_disable = true
+      end, desc '[l]int [d]isable for buffer')
+
+      map('n', '<localleader>lle', function()
+        vim.b.lint_disable = nil
+        vim.b.format_disable = nil
+      end, desc '[l]int [e]nable for buffer')
+
+      map('n', '<localleader>lls', function()
+        print('vim.b.lint_disable =', vim.b.lint_disable)
+      end, desc '[l]int [s]status for buffer')
+
+      map('n', '<localleader>llt', function()
+        print '=== Checking for formatting plugins ==='
+
+        -- Check for common formatting plugins
+        local plugins_to_check = {
+          'conform',
+          'null-ls',
+          'none-ls',
+          'formatter',
+          'neoformat',
+        }
+
+        for _, plugin in ipairs(plugins_to_check) do
+          local ok, _ = pcall(require, plugin)
+          if ok then
+            print('Found plugin:', plugin)
+          end
+        end
+
+        -- Check if format on save is enabled globally
+        print('formatoptions:', vim.bo.formatoptions)
+        print('autowrite:', vim.o.autowrite)
+        print('autowriteall:', vim.o.autowriteall)
+      end, desc '[l]int [s]status for buffer')
+
       map('n', '<localleader>ds', function()
         fzf.lsp_document_symbols { winopts = { preview = { wrap = 'wrap' } } }
       end, desc 'Document Symbols')

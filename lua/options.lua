@@ -100,4 +100,7 @@ vim.opt.expandtab = true -- Use spaces instead of tab characters
 -- 24-bit colour
 vim.opt.termguicolors = true
 
+-- Suggested by avante
+-- views can only be fully collapsed with the global statusline
+vim.opt.laststatus = 3
 -- vim: ts=2 sts=2 sw=2 et

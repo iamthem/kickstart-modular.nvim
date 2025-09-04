@@ -26,6 +26,36 @@ return {
         { 'Bilal2453/luvit-meta', lazy = true }, -- optional `vim.uv` typings
       },
       { 'folke/neoconf.nvim', opts = {}, enabled = false },
+
+      {
+        'mfussenegger/nvim-lint',
+        event = 'BufReadPre',
+        config = function()
+          require('lint').linters_by_ft = {
+            python = { 'ruff' }, -- Much faster than flake8/pylint
+          }
+
+          -- Lint on save only (not real-time)
+          vim.api.nvim_create_autocmd({ 'BufWritePost' }, {
+            callback = function()
+              if not vim.b.lint_disable then
+                require('lint').try_lint()
+              end
+            end,
+          })
+        end,
+      },
+
+      {
+        'numirias/semshi',
+        build = ':UpdateRemotePlugins',
+        ft = 'python',
+        version = '*', -- Recommended to use the latest release
+        init = function() -- example, skip if you're OK with the default config
+          vim.g['semshi#error_sign'] = false
+        end,
+        -- any config or setup that would need to be done after plugin loading
+      },
     },
     config = function()
       local lspconfig = require 'lspconfig'
@@ -47,6 +77,17 @@ return {
           'isort',
           'tree-sitter-cli',
           'jupytext',
+          'ruff',
+          'clangd',
+          'bash-language-server',
+          'json-lsp',
+          'lua-language-server',
+          'marksman',
+          'pyright',
+          'python-lsp-server',
+          'r-languageserver',
+          'svelte-language-server',
+          'yaml-language-server',
         },
       }
 
@@ -64,7 +105,22 @@ return {
           assert(client, 'LSP client not found')
 
           ---@diagnostic disable-next-line: inject-field
-          client.server_capabilities.document_formatting = true
+          if not vim.b.lsp_format_disabled then
+            client.server_capabilities.document_formatting = true
+          end
+          -- Enable inlay hints for pyright
+          if client.name == 'pyright' and client.supports_method 'textDocument/inlayHint' then
+            vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
+          end
+
+          -- Enable semantic tokens for enhanced syntax highlighting
+          if client.supports_method 'textDocument/semanticTokens/full' then
+            vim.api.nvim_set_hl(0, '@lsp.type.variable.python', { link = 'Identifier' })
+            vim.api.nvim_set_hl(0, '@lsp.type.function.python', { link = 'Function' })
+            vim.api.nvim_set_hl(0, '@lsp.type.method.python', { link = 'Function' })
+            vim.api.nvim_set_hl(0, '@lsp.type.class.python', { link = 'Type' })
+            vim.api.nvim_set_hl(0, '@lsp.type.parameter.python', { link = 'Identifier' })
+          end
 
           --now builtin v0.11
           -- map('gS', vim.lsp.buf.document_symbol, '[g]o so [S]ymbols')
@@ -79,6 +135,28 @@ return {
           -- map('<leader>lf', vim.lsp.buf.format, '[l]sp [f]ormat')
           -- vmap('<leader>lf', vim.lsp.buf.format, '[l]sp [f]ormat')
           -- map('<leader>lq', vim.diagnostic.setqflist, '[l]sp diagnostic [q]uickfix')
+        end,
+      })
+
+      -- Auto format on save with semshi refresh
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        pattern = '*.py',
+        callback = function()
+          -- Check if formatting is disabled for this buffer
+          if not vim.b.format_disable then
+            vim.lsp.buf.format()
+          end
+        end,
+      })
+
+      -- Refresh semshi after formatting
+      vim.api.nvim_create_autocmd('BufWritePost', {
+        pattern = '*.py',
+        callback = function()
+          -- Re-enable semshi highlighting after save
+          vim.defer_fn(function()
+            vim.cmd 'Semshi enable'
+          end, 100)
         end,
       })
 
@@ -122,21 +200,6 @@ return {
       }
 
       lspconfig.cssls.setup {
-        capabilities = capabilities,
-        flags = lsp_flags,
-      }
-
-      -- lspconfig.html.setup {
-      --   capabilities = capabilities,
-      --   flags = lsp_flags,
-      -- }
-
-      -- lspconfig.emmet_language_server.setup {
-      --   capabilities = capabilities,
-      --   flags = lsp_flags,
-      -- }
-
-      lspconfig.svelte.setup {
         capabilities = capabilities,
         flags = lsp_flags,
       }
@@ -229,15 +292,10 @@ return {
         },
       }
 
-      lspconfig.vimls.setup {
-        capabilities = capabilities,
-        flags = lsp_flags,
-      }
-
-      lspconfig.julials.setup {
-        capabilities = capabilities,
-        flags = lsp_flags,
-      }
+      -- lspconfig.julials.setup {
+      --   capabilities = capabilities,
+      --   flags = lsp_flags,
+      -- }
 
       lspconfig.bashls.setup {
         capabilities = capabilities,
@@ -257,6 +315,21 @@ return {
       lspconfig.clangd.setup {
         capabilities = capabilities,
         flags = lsp_flags,
+      }
+      lspconfig.pylsp.setup {
+        capabilities = capabilities,
+        settings = {
+          pylsp = {
+            plugins = {
+              rope_completion = { enabled = false },
+              rope_autoimport = { enabled = false },
+              pycodestyle = { enabled = false },
+              pyflakes = { enabled = false },
+              pylint = { enabled = false },
+              mccabe = { enabled = false },
+            },
+          },
+        },
       }
 
       -- lspconfig.ruff_lsp.setup {
@@ -285,6 +358,10 @@ return {
               diagnosticMode = 'workspace',
               diagnosticSeverityOverrides = {
                 reportUnusedExpression = 'none',
+              },
+              inlayHints = {
+                variableTypes = true,
+                functionReturnTypes = true,
               },
             },
           },

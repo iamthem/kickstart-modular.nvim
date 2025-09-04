@@ -7,7 +7,7 @@ return {
     vim.g.molten_image_provider = 'image.nvim'
     -- vim.g.molten_output_win_max_height = 20
     vim.g.molten_auto_open_output = true
-    vim.g.molten_auto_open_html_in_browser = true
+    vim.g.molten_auto_open_html_in_browser = false
     vim.g.molten_tick_rate = 200
 
     -- optional, I like wrapping. works for virt text and the output window
@@ -18,6 +18,7 @@ return {
     vim.g.molten_virt_text_output = true
     -- this will make it so the output shows up below the \`\`\` cell delimiter
     vim.g.molten_virt_lines_off_by_1 = true
+    vim.g.molten_virt_text_max_lines = 24
 
     vim.g.molten_copy_output = true
   end,
